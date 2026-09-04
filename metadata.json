@@ -1,0 +1,6 @@
+{
+  "name": "Bk.Auditor",
+  "description": "Zero-Knowledge Proof continuous auditing engine for enterprise compliance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
