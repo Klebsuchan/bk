@@ -154,12 +154,9 @@ export default function App() {
             </div>
 
             <div className="flex items-center space-x-3 pl-6 border-l border-white/10">
-              <div className="w-8 h-8 rounded-full bg-[#99ff66]/20 border border-[#99ff66]/30 flex items-center justify-center text-[#99ff66] font-bold text-sm overflow-hidden">
-                {walletAddress ? (
-                  <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?auto=format&fit=crop&w=150&q=80" alt="Auditor" className="w-full h-full object-cover" />
-                ) : (
-                  <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=150&q=80" alt="Guest" className="w-full h-full object-cover" />
-                )}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#99ff66]/40 to-transparent border border-[#99ff66]/50 flex items-center justify-center text-[#99ff66] font-bold text-xs overflow-hidden relative group shrink-0">
+                <div className="absolute inset-0 bg-[#99ff66]/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <span className="relative z-10">{walletAddress ? 'AU' : 'GU'}</span>
               </div>
               <span className="text-xs font-mono tracking-widest text-white/60 uppercase">
                 {walletAddress ? t('Auditor', 'Auditor') : t('Admin', 'Administrador')}
