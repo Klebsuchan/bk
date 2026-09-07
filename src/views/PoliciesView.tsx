@@ -1,6 +1,6 @@
 import { useI18n } from '../i18n';
 import { useState, useEffect } from 'react';
-import { ShieldAlert, Play, FileCheck, CheckCircle2, Sparkles, X, Loader2, CalendarClock } from 'lucide-react';
+import { ShieldAlert, Play, FileCheck, CheckCircle2, Sparkles, X, Loader2, CalendarClock, Download } from 'lucide-react';
 import { Policy } from '../types';
 
 interface PoliciesViewProps {
@@ -14,6 +14,21 @@ export function PoliciesView({ onRunAudit, isGuest }: { onRunAudit: (policy: Pol
   const [showAIModal, setShowAIModal] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+
+  const exportCSV = () => {
+    const headers = ['ID', 'Policy Name', 'Description', 'SQL Query', 'Status', 'Schedule'];
+    const csvContent = [
+      headers.join(','),
+      ...policies.map(p => `${p.id},"${p.name}","${p.description}","${p.query}",${p.status},${p.schedule || 'manual'}`)
+    ].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'bk_auditor_policies.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const fetchPolicies = () => {
     fetch('/api/policies')
@@ -49,7 +64,7 @@ export function PoliciesView({ onRunAudit, isGuest }: { onRunAudit: (policy: Pol
         body: JSON.stringify({
           name: generatedData.name,
           description: generatedData.description,
-          queryStr: generatedData.query
+          query: generatedData.query
         })
       });
       

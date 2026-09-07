@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, updateDoc, orderBy, query, limit, where } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, orderBy, query, limit, where } from 'firebase/firestore';
 import fs from 'fs';
 import cors from 'cors';
 import { GoogleGenAI, Type, Schema } from '@google/genai';
@@ -113,6 +113,37 @@ async function startServer() {
   });
 
   
+  
+  // 3a. Add Connector
+  app.post('/api/connectors', async (req, res) => {
+    try {
+      const { name, type } = req.body;
+      const newConnector = {
+        name,
+        type,
+        status: 'disconnected', // Initially disconnected until tested
+        lastSync: 'Never',
+        createdAt: serverTimestamp()
+      };
+      const docRef = await addDoc(collection(db, 'connectors'), newConnector);
+      res.status(201).json({ id: docRef.id, ...newConnector });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+  // 3c. Delete Connector
+  app.delete('/api/connectors/:id', async (req, res) => {
+    try {
+      const { deleteDoc } = require('firebase/firestore'); // Import needed for delete
+      await deleteDoc(doc(db, 'connectors', req.params.id));
+      res.json({ success: true });
+    } catch(err) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
   // 3b. Test Connector
   app.post('/api/connectors/:id/test', async (req, res) => {
     try {

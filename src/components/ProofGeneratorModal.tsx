@@ -45,7 +45,7 @@ export function ProofGeneratorModal({ policy, onClose, onComplete, walletAddress
         await addLog(`Initializing bk.auditor zero-knowledge engine v2.0...`, 500);
         await addLog(`Authenticating wallet context: ${walletAddress || 'GUEST_OVERRIDE'}...`, 600);
         await addLog(`Loading policy template: ${policy.name}`, 400);
-        await addLog(`Parsing constraint query: ${policy.queryStr.slice(0, 30)}...`, 800);
+        await addLog(`Parsing constraint query: ${(policy.query || '').slice(0, 30)}...`, 800);
         await addLog(`Establishing secure tunnel to local database...`, 900);
         await addLog(`Extracting raw tabular rows (Private Context)...`, 1200);
         await addLog(`Data extracted successfully. Applying SNARK polynomials...`, 1500);
@@ -63,6 +63,7 @@ export function ProofGeneratorModal({ policy, onClose, onComplete, walletAddress
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             policyId: policy.id,
+            policyName: policy.name,
             walletAddress: walletAddress || null
           })
         });

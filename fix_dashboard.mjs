@@ -1,48 +1,72 @@
 import fs from 'fs';
+
 let content = fs.readFileSync('src/views/DashboardView.tsx', 'utf-8');
 
-content = content.replace("import { LineChart,", "import { useI18n } from '../i18n';\nimport { LineChart,");
-content = content.replace("export function DashboardView({ walletAddress }: { walletAddress?: string | null }) {", "export function DashboardView({ walletAddress }: { walletAddress?: string | null }) {\n  const { t } = useI18n();");
+const useEffectTarget = `  useEffect(() => {
+    // We would fetch all needed data here in a real app
+    // For demo, we just fetch proofs to generate stats
+    fetch('/api/proofs')
+      .then(res => res.json())
+      .then(data => {
+        setProofs(data);
+        const verified = data.filter((p: Proof) => p.status === 'verified').length;
+        const failed = data.filter((p: Proof) => p.status === 'failed').length;
+        
+        setStats({
+          active: 3, // based on seed data
+          connected: 4, // based on seed data
+          verified,
+          failed,
+        });
+      });
+  }, []);
 
-// Translations
-content = content.replace(/'Active Policies'/g, "t('Active Policies', 'Políticas Ativas')");
-content = content.replace(/'Verified Proofs'/g, "t('Verified Proofs', 'Provas Verificadas')");
-content = content.replace(/'Connected DBs'/g, "t('Connected DBs', 'BDs Conectados')");
-content = content.replace(/'Failed Checks'/g, "t('Failed Checks', 'Checagens Falhas')");
+  const lineData = [
+    { name: t('Mon', 'Seg'), proofs: 12 },
+    { name: t('Tue', 'Ter'), proofs: 19 },
+    { name: t('Wed', 'Qua'), proofs: 15 },
+    { name: t('Thu', 'Qui'), proofs: 22 },
+    { name: t('Fri', 'Sex'), proofs: 28 },
+    { name: t('Sat', 'Sáb'), proofs: 14 },
+    { name: t('Sun', 'Dom'), proofs: Math.max(10, proofs.length) },
+  ];`;
 
-content = content.replace(/>System Overview</g, ">{t('System Overview', 'Visão Geral do Sistema')}<");
-content = content.replace(/>Continuous cryptographic compliance monitoring is active\.</g, ">{t('Continuous cryptographic compliance monitoring is active.', 'O monitoramento contínuo de conformidade criptográfica está ativo.')}<");
-content = content.replace(/>Overview</g, ">{t('Overview', 'Visão Geral')}<");
-content = content.replace(/>Audit History</g, ">{t('Audit History', 'Histórico')}<");
+const useEffectReplacement = `  const [lineData, setLineData] = useState<any[]>([]);
 
-content = content.replace(/>Live</g, ">{t('Live', 'Ao vivo')}<");
-content = content.replace(/>Audit Activity \(7 Days\)</g, ">{t('Audit Activity (7 Days)', 'Atividade de Auditoria (7 Dias)')}<");
-content = content.replace(/>Success Rate</g, ">{t('Success Rate', 'Taxa de Sucesso')}<");
-content = content.replace(/'Verified'/g, "t('Verified', 'Verificado')");
-content = content.replace(/'Failed'/g, "t('Failed', 'Falha')");
-content = content.replace(/>Immutable Audit Ledger</g, ">{t('Immutable Audit Ledger', 'Livro-razão de Auditoria Imutável')}<");
-content = content.replace(/>Secured by ZK-SNARKs</g, ">{t('Secured by ZK-SNARKs', 'Protegido por ZK-SNARKs')}<");
+  useEffect(() => {
+    fetch('/api/stats')
+      .then(res => res.json())
+      .then(data => {
+        setStats({
+          active: data.activePolicies,
+          connected: data.activeConnectors,
+          verified: data.verifiedProofs,
+          failed: data.failedProofs,
+        });
+        
+        const i18nDays: Record<string, string> = {
+          'Mon': t('Mon', 'Seg'),
+          'Tue': t('Tue', 'Ter'),
+          'Wed': t('Wed', 'Qua'),
+          'Thu': t('Thu', 'Qui'),
+          'Fri': t('Fri', 'Sex'),
+          'Sat': t('Sat', 'Sáb'),
+          'Sun': t('Sun', 'Dom'),
+        };
+        
+        setLineData(data.lineData.map((d: any) => ({
+          name: i18nDays[d.name] || d.name,
+          proofs: d.proofs
+        })));
+      });
+      
+    fetch('/api/proofs')
+      .then(res => res.json())
+      .then(data => {
+        setProofs(data);
+      });
+  }, [t]);`;
 
-content = content.replace(/>Timestamp</g, ">{t('Timestamp', 'Data/Hora')}<");
-content = content.replace(/>Policy Type</g, ">{t('Policy Type', 'Tipo de Política')}<");
-content = content.replace(/>Status</g, ">{t('Status', 'Status')}<");
-content = content.replace(/>Proof Hash \(Solana\)</g, ">{t('Proof Hash (Solana)', 'Hash da Prova (Solana)')}<");
-content = content.replace(/>Explorer</g, ">{t('Explorer', 'Explorador')}<");
-content = content.replace(/>No audit history found</g, ">{t('No audit history found', 'Nenhum histórico encontrado')}<");
-
-content = content.replace(/> Verified<\/span>/g, "> {t('Verified', 'Verificado')}</span>");
-content = content.replace(/> Failed<\/span>/g, "> {t('Failed', 'Falha')}</span>");
-content = content.replace(/> Generating<\/span>/g, "> {t('Generating', 'Gerando')}</span>");
-content = content.replace(/>View tx ↗</g, ">{t('View tx ↗', 'Ver tx ↗')}<");
-
-// Days
-content = content.replace(/'Mon'/g, "t('Mon', 'Seg')");
-content = content.replace(/'Tue'/g, "t('Tue', 'Ter')");
-content = content.replace(/'Wed'/g, "t('Wed', 'Qua')");
-content = content.replace(/'Thu'/g, "t('Thu', 'Qui')");
-content = content.replace(/'Fri'/g, "t('Fri', 'Sex')");
-content = content.replace(/'Sat'/g, "t('Sat', 'Sáb')");
-content = content.replace(/'Sun'/g, "t('Sun', 'Dom')");
-
-
+content = content.replace(useEffectTarget, useEffectReplacement);
 fs.writeFileSync('src/views/DashboardView.tsx', content);
+console.log('DashboardView updated');
