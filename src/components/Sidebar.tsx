@@ -1,4 +1,4 @@
-import { Shield, Database, FileCheck, LockKeyhole, Settings, LayoutDashboard } from 'lucide-react';
+import { Shield, Database, FileCheck, LockKeyhole, Settings, LayoutDashboard, BookOpen } from 'lucide-react';
 import { Tab } from '../types';
 import { ReactNode } from 'react';
 import { useI18n } from '../i18n';
@@ -15,6 +15,7 @@ export function Sidebar({ currentTab, onTabChange }: SidebarProps) {
     { id: 'connectors', label: t('Data Connectors', 'Conectores de Dados'), icon: <Database className="w-5 h-5" /> },
     { id: 'policies', label: t('Audit Policies', 'Políticas de Auditoria'), icon: <FileCheck className="w-5 h-5" /> },
     { id: 'proofs', label: t('ZK Proofs', 'Provas ZK'), icon: <LockKeyhole className="w-5 h-5" /> },
+    { id: 'manual', label: t('Manual', 'Manual'), icon: <BookOpen className="w-5 h-5" /> },
   ];
 
   return (

@@ -1,4 +1,4 @@
-export type Tab = 'dashboard' | 'connectors' | 'policies' | 'proofs' | 'settings';
+export type Tab = 'dashboard' | 'connectors' | 'policies' | 'proofs' | 'manual' | 'settings';
 
 export interface Connector {
   id: string;

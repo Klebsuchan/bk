@@ -11,6 +11,7 @@ import { ConnectorsView } from './views/ConnectorsView';
 import { PoliciesView } from './views/PoliciesView';
 import { ProofsView } from './views/ProofsView';
 import { LandingPageView } from './views/LandingPageView';
+import { ManualView } from './views/ManualView';
 import { SettingsView } from './views/SettingsView';
 import { useI18n } from './i18n';
 import { Tab, Policy, AppNotification } from './types';
@@ -69,6 +70,8 @@ export default function App() {
         return <PoliciesView onRunAudit={setActiveAudit} isGuest={!walletAddress} />;
       case 'proofs':
         return <ProofsView />;
+      case 'manual':
+        return <ManualView />;
       case 'settings':
         return <SettingsView />;
       default:

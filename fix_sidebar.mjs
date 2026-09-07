@@ -1,22 +1,15 @@
 import fs from 'fs';
+
 let content = fs.readFileSync('src/components/Sidebar.tsx', 'utf-8');
 
-const oldButton = `<button className="w-full flex items-center px-4 py-3 text-white/40 hover:bg-white/5 hover:text-white rounded-sm transition-colors uppercase tracking-widest text-xs font-mono">
-          <Settings className="w-5 h-5" />
-          <span className="ml-3 font-medium">{t('Settings', 'Configurações')}</span>
-        </button>`;
+// 1. Add BookOpen icon
+content = content.replace("import { Shield, Database, FileCheck, LockKeyhole, Settings, LayoutDashboard } from 'lucide-react';", "import { Shield, Database, FileCheck, LockKeyhole, Settings, LayoutDashboard, BookOpen } from 'lucide-react';");
 
-const newButton = `<button 
-          onClick={() => onTabChange('settings')}
-          className={\`w-full flex items-center px-4 py-3 rounded-sm transition-colors uppercase tracking-widest text-xs font-mono \${
-              currentTab === 'settings'
-                ? 'bg-[#99ff66]/10 text-[#99ff66] border border-[#99ff66]/20'
-                : 'text-white/40 hover:bg-white/5 hover:text-white border border-transparent'
-            }\`}
-        >
-          <Settings className="w-5 h-5" />
-          <span className="ml-3 font-medium">{t('Settings', 'Configurações')}</span>
-        </button>`;
+// 2. Add manual tab to navItems
+const navItemsTarget = `    { id: 'proofs', label: t('ZK Proofs', 'Provas ZK'), icon: <LockKeyhole className="w-5 h-5" /> },`;
+const navItemsReplacement = `    { id: 'proofs', label: t('ZK Proofs', 'Provas ZK'), icon: <LockKeyhole className="w-5 h-5" /> },
+    { id: 'manual', label: t('Manual', 'Manual'), icon: <BookOpen className="w-5 h-5" /> },`;
+content = content.replace(navItemsTarget, navItemsReplacement);
 
-content = content.replace(oldButton, newButton);
 fs.writeFileSync('src/components/Sidebar.tsx', content);
+console.log('Sidebar updated');
