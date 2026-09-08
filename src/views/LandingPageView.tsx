@@ -1,8 +1,9 @@
-import { Instagram, Link as LinkIcon, Menu, AlertCircle, Search, ShieldCheck, Database, FileText, Fingerprint, Lock, Zap, ArrowRight, Github, Twitter, Layers, HelpCircle, LayoutDashboard, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Link as LinkIcon, Menu, AlertCircle, Search, ShieldCheck, Database, FileText, Fingerprint, Lock, Zap, ArrowRight, Layers, HelpCircle, LayoutDashboard, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { BrowserProvider } from 'ethers';
 import { motion } from 'motion/react';
 import { useI18n } from '../i18n';
+import { generateWhitepaper } from '../utils/pdfGenerator';
 
 interface LandingPageViewProps {
   onLaunch: (walletAddress: string | null) => void;
@@ -16,7 +17,14 @@ export function LandingPageView({ onLaunch }: LandingPageViewProps) {
   const [showWalletSelector, setShowWalletSelector] = useState(false);
   const [verifyHash, setVerifyHash] = useState('');
   const [verifyStatus, setVerifyStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  const [showCookies, setShowCookies] = useState(true);
+  const [popupContent, setPopupContent] = useState<{title: string, body: string} | null>(null);
   const [activeTab, setActiveTab] = useState<'regulations' | 'financials' | 'esg'>('financials');
+  
+  const handleLinkClick = (e: React.MouseEvent, title: string, body: string) => {
+    e.preventDefault();
+    setPopupContent({ title, body });
+  };
   const [lang, setLang] = useState<'pt' | 'en'>('pt');
 
   const t = (en: string, pt: string) => lang === 'pt' ? pt : en;
@@ -248,6 +256,13 @@ export function LandingPageView({ onLaunch }: LandingPageViewProps) {
                     {t("Continue as Guest", "Continuar como Visitante")}
                  </button>
                  <button 
+                    onClick={() => generateWhitepaper(lang)}
+                    className="bg-white/5 border border-white/10 text-white px-8 py-4 rounded-full text-xs font-bold uppercase tracking-[0.2em] hover:bg-[#99ff66]/20 hover:border-[#99ff66]/50 hover:text-[#99ff66] transition-all w-full flex justify-center items-center gap-2"
+                 >
+                    <FileText className="w-4 h-4" />
+                    {t("Download Whitepaper (PDF)", "Baixar Whitepaper (PDF)")}
+                 </button>
+                 <button 
                     onClick={() => setShowWalletGuide(true)}
                     className="mt-2 text-[10px] font-mono text-white/50 hover:text-white flex items-center justify-center gap-1.5 transition-colors w-full uppercase tracking-widest"
                  >
@@ -377,7 +392,7 @@ export function LandingPageView({ onLaunch }: LandingPageViewProps) {
             
             <div className="border border-white/10 rounded-sm p-4 bg-[#0a0a0a]">
               <h4 className="font-black mb-6 bg-white text-black inline-block px-3 py-1.5 text-sm tracking-tight uppercase">{t('On-Chain Policy Engine in Rust', 'Motor de Políticas On-Chain em Rust')}</h4>
-              <div className="h-[450px] flex flex-col md:flex-row gap-4">
+              <div className="h-[300px] flex flex-col md:flex-row gap-4">
                 <div className="flex-1 bg-[#050505] border border-white/10 rounded-sm overflow-hidden relative group">
                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(153,255,102,0.03)_50%,transparent_75%,transparent_100%)] bg-[length:20px_20px]"></div>
                   <div className="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity duration-700">
@@ -460,7 +475,7 @@ export function LandingPageView({ onLaunch }: LandingPageViewProps) {
           
           <div className="max-w-[1600px] mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16 md:mb-24">
-              <div className="rounded-xl overflow-hidden border border-white/10 relative h-[300px] lg:h-[450px] bg-[#050505] flex items-center justify-center group">
+              <div className="rounded-xl overflow-hidden border border-white/10 relative h-[300px] lg:h-[300px] bg-[#050505] flex items-center justify-center group">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(153,255,102,0.05)_0,transparent_60%)] group-hover:bg-[radial-gradient(circle_at_center,rgba(153,255,102,0.1)_0,transparent_70%)] transition-all duration-700"></div>
                 <div className="grid grid-cols-6 grid-rows-6 gap-2 sm:gap-3 w-full h-full p-8 sm:p-12 opacity-30 relative z-10">
                   {Array.from({ length: 36 }).map((_, i) => (
@@ -631,37 +646,33 @@ export function LandingPageView({ onLaunch }: LandingPageViewProps) {
             <p className="text-sm text-white/50 max-w-sm leading-relaxed mb-6">
               {t("The world's most advanced Zero-Knowledge auditing protocol. Connect your data, prove your compliance mathematically, and maintain absolute privacy.", 'O protocolo de auditoria de Conhecimento Zero mais avançado do mundo. Conecte seus dados, prove sua conformidade matematicamente e mantenha privacidade absoluta.')}
             </p>
-            <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors cursor-pointer"><Twitter className="w-4 h-4" /></div>
-              <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors cursor-pointer"><Github className="w-4 h-4" /></div>
-              <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors cursor-pointer"><Instagram className="w-4 h-4" /></div>
-            </div>
+
           </div>
           <div>
             <h4 className="font-bold uppercase tracking-widest text-xs mb-6 text-white/40">{t('Platform', 'Plataforma')}</h4>
             <ul className="space-y-4 text-sm text-white/70">
-              <li><a href="#features" className="hover:text-[#99ff66] transition-colors">{t('ZK-Rollup Engine', 'Motor ZK-Rollup')}</a></li>
-              <li><a href="#features" className="hover:text-[#99ff66] transition-colors">{t('AI Policy Generator', 'Gerador de Políticas IA')}</a></li>
-              <li><a href="#workflow" className="hover:text-[#99ff66] transition-colors">{t('Public Verifier', 'Verificador Público')}</a></li>
-              <li><a href="#infrastructure" className="hover:text-[#99ff66] transition-colors">Soulbound Tokens</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, t('ZK-Rollup Engine', 'Motor ZK-Rollup'), t('Our engine processes millions of transactions off-chain and submits a single mathematical proof.', 'Nosso motor processa milhões de transações off-chain e submete uma única prova matemática.'))} className="hover:text-[#99ff66] transition-colors">{t('ZK-Rollup Engine', 'Motor ZK-Rollup')}</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, t('AI Policy Generator', 'Gerador de Políticas IA'), t('Powered by Google Gemini to translate natural language into ZK circuits.', 'Alimentado pelo Google Gemini para traduzir linguagem natural em circuitos ZK.'))} className="hover:text-[#99ff66] transition-colors">{t('AI Policy Generator', 'Gerador de Políticas IA')}</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, t('Public Verifier', 'Verificador Público'), t('Anyone can verify a proof using the hash without seeing the original data.', 'Qualquer um pode verificar uma prova usando o hash sem ver os dados originais.'))} className="hover:text-[#99ff66] transition-colors">{t('Public Verifier', 'Verificador Público')}</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, 'Soulbound Tokens', t('Non-transferable certificates issued upon successful audits.', 'Certificados intransferíveis emitidos após auditorias bem-sucedidas.'))} className="hover:text-[#99ff66] transition-colors">Soulbound Tokens</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-bold uppercase tracking-widest text-xs mb-6 text-white/40">{t('Company', 'Empresa')}</h4>
             <ul className="space-y-4 text-sm text-white/70">
-              <li><a href="#" className="hover:text-[#99ff66] transition-colors">{t('About Protocol', 'Sobre o Protocolo')}</a></li>
-              <li><a href="#" className="hover:text-[#99ff66] transition-colors">{t('Documentation', 'Documentação')}</a></li>
-              <li><a href="#" className="hover:text-[#99ff66] transition-colors">{t('Security Audits', 'Auditorias de Segurança')}</a></li>
-              <li><a href="#" className="hover:text-[#99ff66] transition-colors">{t('Contact', 'Contato')}</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, t('About Protocol', 'Sobre o Protocolo'), t('bk.auditor is a decentralized zero-knowledge compliance protocol.', 'bk.auditor é um protocolo descentralizado de conformidade zero-knowledge.'))} className="hover:text-[#99ff66] transition-colors">{t('About Protocol', 'Sobre o Protocolo')}</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, t('Documentation', 'Documentação'), t('Technical docs are available in the GitHub repository.', 'A documentação técnica está disponível no repositório GitHub.'))} className="hover:text-[#99ff66] transition-colors">{t('Documentation', 'Documentação')}</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, t('Security Audits', 'Auditorias de Segurança'), t('Smart contracts audited by independent security firms.', 'Smart contracts auditados por firmas de segurança independentes.'))} className="hover:text-[#99ff66] transition-colors">{t('Security Audits', 'Auditorias de Segurança')}</a></li>
+              <li><a href="#" onClick={(e) => handleLinkClick(e, t('Contact', 'Contato'), t('Contact us at security@bk.auditor for enterprise onboarding.', 'Contate-nos em security@bk.auditor para integração empresarial.'))} className="hover:text-[#99ff66] transition-colors">{t('Contact', 'Contato')}</a></li>
             </ul>
           </div>
         </div>
         <div className="max-w-[1600px] mx-auto border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-white/30 uppercase tracking-widest">
           <p>© {new Date().getFullYear()} BK.AUDITOR PROTOCOL. {t('ALL RIGHTS RESERVED.', 'TODOS OS DIREITOS RESERVADOS.')}</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-white">Privacy</a>
-            <a href="#" className="hover:text-white">Terms</a>
-            <a href="#" className="hover:text-white">Cookies</a>
+            <a href="#" onClick={(e) => handleLinkClick(e, 'Privacy', t('Your privacy is guaranteed by mathematics. We do not store PII.', 'Sua privacidade é garantida por matemática. Nós não armazenamos PII.'))} className="hover:text-white">Privacy</a>
+            <a href="#" onClick={(e) => handleLinkClick(e, 'Terms', t('By using this protocol, you agree to cryptographic accountability.', 'Ao usar este protocolo, você concorda com a responsabilidade criptográfica.'))} className="hover:text-white">Terms</a>
+            <a href="#" onClick={(e) => handleLinkClick(e, 'Cookies', t('We only use essential functional cookies.', 'Nós apenas usamos cookies funcionais essenciais.'))} className="hover:text-white">Cookies</a>
           </div>
         </div>
       </footer>
@@ -822,6 +833,59 @@ export function LandingPageView({ onLaunch }: LandingPageViewProps) {
           </div>
         </div>
       )}
+
+      {/* Generic Link Popup Modal */}
+      {popupContent && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md px-4">
+          <div className="bg-[#0a0a0a] border border-white/20 rounded-xl w-full max-w-md overflow-hidden shadow-2xl relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#99ff66] to-transparent opacity-50"></div>
+            <div className="p-8 text-center">
+              <h2 className="text-xl font-black uppercase tracking-tighter text-white mb-4">{popupContent.title}</h2>
+              <p className="text-white/70 font-mono text-sm leading-relaxed mb-8">{popupContent.body}</p>
+              <button 
+                onClick={() => setPopupContent(null)}
+                className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-sm font-bold uppercase tracking-widest text-xs transition-colors"
+              >
+                {t('Close', 'Fechar')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cookie Consent Banner/Modal */}
+      {showCookies && (
+        <div className="fixed bottom-0 left-0 w-full z-[70] bg-[#050505] border-t border-[#99ff66]/30 p-4 md:p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-[#99ff66]/10 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-5 h-5 text-[#99ff66]" />
+              </div>
+              <div className="text-left">
+                <h3 className="text-white font-bold uppercase tracking-widest text-sm mb-1">{t('Cookie Policy', 'Política de Cookies')}</h3>
+                <p className="text-white/60 font-mono text-xs leading-relaxed max-w-2xl">
+                  {t('We use strictly essential cryptographic local storage and minimal functional cookies to maintain your session and UI preferences. No tracking. No analytics. Pure zero-knowledge design.', 'Nós usamos apenas armazenamento local criptográfico estritamente essencial e cookies funcionais mínimos para manter sua sessão e preferências de interface. Sem rastreamento. Sem analytics. Design puro zero-knowledge.')}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 shrink-0 w-full md:w-auto">
+              <button 
+                onClick={() => setShowCookies(false)}
+                className="flex-1 md:flex-none border border-white/20 hover:bg-white/5 text-white px-6 py-3 rounded-sm font-bold uppercase tracking-widest text-xs transition-colors"
+              >
+                {t('Decline', 'Recusar')}
+              </button>
+              <button 
+                onClick={() => setShowCookies(false)}
+                className="flex-1 md:flex-none bg-[#99ff66] hover:bg-white text-black px-6 py-3 rounded-sm font-bold uppercase tracking-widest text-xs transition-colors shadow-[0_0_15px_rgba(153,255,102,0.2)]"
+              >
+                {t('Accept', 'Aceitar')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

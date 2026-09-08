@@ -11,6 +11,7 @@ import { ConnectorsView } from './views/ConnectorsView';
 import { PoliciesView } from './views/PoliciesView';
 import { ProofsView } from './views/ProofsView';
 import { LandingPageView } from './views/LandingPageView';
+import { WalletOnboardingView } from './views/WalletOnboardingView';
 import { ManualView } from './views/ManualView';
 import { SettingsView } from './views/SettingsView';
 import { useI18n } from './i18n';
@@ -19,6 +20,7 @@ import { Bell, Search, AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
 
 export default function App() {
   const [isLandingPage, setIsLandingPage] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [currentTab, setCurrentTab] = useState<Tab>('dashboard');
   const [activeAudit, setActiveAudit] = useState<Policy | null>(null);
@@ -35,12 +37,12 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (!isLandingPage) {
+    if (!isLandingPage && !showOnboarding) {
       fetchNotifications();
       const interval = setInterval(fetchNotifications, 10000); // poll every 10s
       return () => clearInterval(interval);
     }
-  }, [isLandingPage]);
+  }, [isLandingPage, showOnboarding]);
 
   const handleMarkAsRead = async (id: string) => {
     try {
@@ -57,7 +59,14 @@ export default function App() {
     return <LandingPageView onLaunch={(addr) => {
       setWalletAddress(addr);
       setIsLandingPage(false);
+      if (addr) {
+        setShowOnboarding(true);
+      }
     }} />;
+  }
+
+  if (showOnboarding && walletAddress) {
+    return <WalletOnboardingView walletAddress={walletAddress} onProceed={() => setShowOnboarding(false)} />;
   }
 
   const renderContent = () => {

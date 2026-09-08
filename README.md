@@ -1,112 +1,115 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shield-check.svg" alt="bk.auditor icon" width="80" height="80" />
-  
-  <h1 align="center">bk.auditor®</h1>
-  <p align="center">
-    <strong>Enterprise Zero-Knowledge (ZK) Auditing Protocol</strong>
-  </p>
+# 🛡️ bk.auditor® 
 
-  <p align="center">
-    <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-19-blue.svg?style=flat-square&logo=react" alt="React" /></a>
-    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.0-blue.svg?style=flat-square&logo=typescript" alt="TypeScript" /></a>
-    <a href="https://solana.com/"><img src="https://img.shields.io/badge/Ecosystem-Solana-14F195.svg?style=flat-square&logo=solana&logoColor=black" alt="Solana" /></a>
-    <a href="https://deepmind.google/technologies/gemini/"><img src="https://img.shields.io/badge/AI-Google_Gemini-4285F4.svg?style=flat-square&logo=google" alt="Gemini" /></a>
-  </p>
+<div align="center">
+  <img src="https://img.shields.io/badge/Built_with-Cursor_IDE-000000?style=for-the-badge&logo=cursor" alt="Built with Cursor" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
+  <img src="https://img.shields.io/badge/Solana-14F195?style=for-the-badge&logo=solana&logoColor=white" alt="Solana" />
 </div>
 
 <br />
 
-## 🔒 What is bk.auditor?
+**bk.auditor®** is a modern, full-stack Zero-Knowledge (ZK) auditing platform designed for enterprise environments. It allows corporations to cryptographically prove compliance (e.g., HR data, ESG metrics, Core Banking solvency) and anchor these proofs on the Solana blockchain—without ever exposing raw, sensitive Personally Identifiable Information (PII).
 
-**bk.auditor®** is a cutting-edge cryptographic infrastructure designed to bridge the gap between private enterprise databases and public trustless verification. It allows corporations to mathematically prove compliance to regulators and stakeholders **without ever exposing the underlying raw data**.
+---
 
-Powered by advanced **ZK-SNARKs** (Zero-Knowledge Proofs), integrated AI (Google Gemini), and blockchain anchoring, bk.auditor turns subjective compliance into absolute mathematical certainty.
+## 🤖 AI-Assisted Development with Cursor
+
+This repository was architected and developed using the **[Cursor IDE](https://cursor.sh/)**. The codebase is structured to maximize the efficiency of AI-assisted coding, utilizing Cursor's unique features:
+
+- **`Cmd+K` (Inline Generation):** Used extensively to rapidly prototype complex React components, Tailwind CSS styling, and Recharts integrations.
+- **`Cmd+L` (Chat & Codebase Context):** The end-to-end Vercel Serverless + Express API architecture was refactored using Cursor's codebase indexing (`@Codebase`), allowing seamless bridging between the Vite frontend and the Firebase backend.
+- **AI Debugging:** Complex asynchronous state updates, Top-Level Await ES module resolutions, and Vercel routing configurations (`vercel.json`) were solved using Cursor's terminal error integrations.
+
+If you are cloning this repository, we highly recommend opening it in **Cursor** for the best developer experience.
 
 ---
 
 ## ✨ Key Features
 
-- **🛡️ Zero-Knowledge Engine:** Computes Groth16 cryptographic proofs directly on local databases, generating secure hashes without leaking PII or sensitive financials.
-- **🧠 AI Policy Generator:** Powered by Google Gemini 2.5, it transpiles natural language (e.g., *"No employee can have a negative balance"*) into rigorous SQL queries and ZK constraints.
-- **⛓️ Immutable Ledger:** Anchors verified audit proofs to the blockchain.
-- **📜 Soulbound Certificates:** Mints non-transferable Soulbound Tokens (SBTs) and exports official, highly-professional PDF Audit Certificates.
-- **👛 Web3 Authentication:** Passwordless login via Solana (Phantom, Solflare, etc.) or Ethereum wallets, with Role-Based Access Control (Auditor vs. Guest).
-- **🖥️ Cybernetic Terminal:** Real-time visual feedback of circuit compilation, polynomial computation, and proof generation via a hacker-style CLI interface.
+- **🔌 Data Connectors:** Simulate secure handshake connections with legacy databases (Oracle, PostgreSQL, MongoDB).
+- **🧠 AI Policy Generator:** Powered by Google Gemini, allowing compliance officers to type rules in plain English (e.g., *"Ensure all salaries are positive"*) and automatically translate them into SQL queries and ZK constraints.
+- **🔐 ZK-SNARK Simulation:** Wallets act as cryptographic identities, signing transactions that mathematically prove data correctness without extracting raw data.
+- **📄 Immutable Audit Seals:** Export cryptographically backed audit logs to CSV or PDF for regulatory bodies.
+- **☁️ Vercel Ready:** Fully configured with `vercel.json` to deploy the Express backend as Serverless Functions alongside the static React frontend.
 
 ---
 
-## 🛠️ Architecture & Tech Stack
+## 🏗️ Architecture & Tech Stack
 
-### Frontend
-- **Framework:** React 19 + Vite
-- **Styling:** Tailwind CSS v4 + Motion (Framer Motion) for fluid animations
-- **Icons:** Lucide React
-- **Web3:** `ethers.js` + Native Solana Provider integration
-- **PDF Generation:** `jspdf`
-
-### Backend
-- **Server:** Node.js + Express (Full-stack setup via Vite middleware)
-- **Database:** Firebase Firestore (NoSQL)
-- **AI Integration:** `@google/genai` (Gemini SDK)
-- **Cryptography:** `snarkjs` (ZK-SNARK simulation & execution)
+- **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, Lucide Icons, Recharts.
+- **Backend:** Node.js, Express (compiled as Vercel Serverless Functions via `api/index.ts`).
+- **Database:** Firebase Firestore (NoSQL) for policies, connectors, and proof history.
+- **AI Integration:** Google GenAI SDK (`@google/genai`).
 
 ---
 
-## 🚀 Getting Started (Local Development)
+## 🚀 Getting Started Locally
 
-### Prerequisites
-- [Node.js](https://nodejs.org/en/) (v22+ recommended)
-- [npm](https://www.npmjs.com/) or yarn
-- A Google Gemini API Key
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/bk-auditor.git
+cd bk-auditor
+```
 
-### Installation
+### 2. Install dependencies
+*(Pro-tip: If using Cursor, just ask `Cmd+L`: "Install my dependencies and start the dev server")*
+```bash
+npm install
+```
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/bk-auditor.git
-   cd bk-auditor
-   ```
+### 3. Environment Setup
+Create a `.env` file in the root directory and add your API keys.
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+Ensure your `firebase-applet-config.json` is present in the root folder for database connectivity.
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables:**
-   Create a `.env` file in the root directory and add your Gemini API Key:
-   ```env
-   GEMINI_API_KEY="your_google_gemini_api_key_here"
-   ```
-
-4. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-   > The application will automatically boot the Express server (handling the AI routes and Firebase endpoints) and the Vite frontend on port 3000.
-
-5. **Build for Production:**
-   ```bash
-   npm run build
-   npm run start
-   ```
+### 4. Run the Development Server
+```bash
+npm run dev
+```
+The app will start the Vite frontend and the Express backend concurrently.
 
 ---
 
-## 🗺️ Roadmap
+## ☁️ Deploying to Vercel
 
-- **Q1 [Completed]:** Core ZK-SNARK Engine, Wallet Authentication, Public Hash Verifier.
-- **Q2 [Active]:** AI Integrations (Natural Language to SQL), Smart Database Connectors, Advanced Analytics.
-- **Q3 [Upcoming]:** Enterprise Rollout, Multi-Chain SBT Minting, Automated Audit Schedules.
-- **Q4 [Upcoming]:** Decentralized Oracle Network, DAO Governance, Mainnet V1 Launch.
+This project is fully optimized for Vercel deployment out-of-the-box. The `vercel.json` file dictates the routing, ensuring API calls (`/api/*`) are directed to the Node.js serverless backend.
+
+1. Push your code to GitHub.
+2. Go to your [Vercel Dashboard](https://vercel.com/) and click **Add New Project**.
+3. Import the repository.
+4. **Important:** In the Vercel Environment Variables section, add your `GEMINI_API_KEY`.
+5. Click **Deploy**.
+
+Vercel will automatically run the build scripts defined in `package.json` (`vite build` and `esbuild`), bundle the backend, and serve the application globally.
 
 ---
 
-## 📄 License
+## 📂 Project Structure
 
-This project is licensed under the **MIT License**.
+```text
+bk-auditor/
+├── api/
+│   └── index.ts          # Vercel Serverless Function entry point (Express API)
+├── src/
+│   ├── components/       # Reusable UI components (Sidebar, Modals)
+│   ├── views/            # Main pages (Dashboard, Proofs, Connectors, Manual)
+│   ├── App.tsx           # Application router and layout
+│   └── types.ts          # TypeScript global interfaces
+├── firebase-applet-config.json # Firebase connection credentials
+├── server.ts             # Local Express development server
+├── vercel.json           # Vercel deployment configuration
+└── package.json          # Build scripts and dependencies
+```
 
-<br />
+---
 
-<div align="center">
-  <sub>Built for the future of cryptographic compliance.</sub>
-</div>
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+*Developed at the speed of thought with Cursor.*
