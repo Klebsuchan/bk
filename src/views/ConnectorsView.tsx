@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useI18n } from '../i18n';
 import { Database, Plus, RefreshCw, Terminal, X, Check, Loader2, Info, Trash2 } from 'lucide-react';
 import { Connector } from '../types';
+import { PluggyConnect } from 'react-pluggy-connect';
 
 export function ConnectorsView() {
   const { t } = useI18n();
@@ -13,6 +14,8 @@ export function ConnectorsView() {
   const [infoConnector, setInfoConnector] = useState<Connector | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newConnectorName, setNewConnectorName] = useState('');
+  const [pluggyToken, setPluggyToken] = useState<string | null>(null);
+  const [isPluggyLoading, setIsPluggyLoading] = useState(false);
   const [newConnectorType, setNewConnectorType] = useState('postgres');
   const [isAdding, setIsAdding] = useState(false);
 
@@ -33,6 +36,26 @@ export function ConnectorsView() {
     fetchConnectors();
   }, []);
   
+  
+  const handleOpenPluggy = async () => {
+    setIsPluggyLoading(true);
+    try {
+        const res = await fetch('/api/pluggy/token');
+        const data = await res.json();
+        if (data.accessToken) {
+            setPluggyToken(data.accessToken);
+        } else {
+            console.error('No token returned', data);
+            alert('Error generating Pluggy Token');
+        }
+    } catch(err) {
+        console.error(err);
+        alert('Network error connecting to Pluggy');
+    } finally {
+        setIsPluggyLoading(false);
+    }
+  };
+
   const handleAddConnector = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newConnectorName.trim()) return;
@@ -110,10 +133,16 @@ export function ConnectorsView() {
           <h1 className="text-2xl font-black text-white mb-2 uppercase tracking-tighter">{t('Data Connectors', 'Conectores de Dados')}</h1>
           <p className="text-white/50 text-xs font-mono uppercase tracking-widest">Integrate legacy systems for zero-knowledge data extraction.</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} className="flex items-center px-4 py-2 bg-white hover:bg-[#99ff66] text-black rounded-sm font-black uppercase tracking-widest text-xs transition-colors">
+        <div className="flex gap-3">
+          <button onClick={handleOpenPluggy} disabled={isPluggyLoading} className="flex items-center px-4 py-2 bg-transparent border border-white/20 hover:bg-white/10 text-white rounded-sm font-black uppercase tracking-widest text-xs transition-colors disabled:opacity-50">
+            {isPluggyLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+            {t('Open Finance', 'Open Finance')}
+          </button>
+          <button onClick={() => setShowAddModal(true)} className="flex items-center px-4 py-2 bg-white hover:bg-[#99ff66] text-black rounded-sm font-black uppercase tracking-widest text-xs transition-colors">
           <Plus className="w-4 h-4 mr-2" />
           Add Connector
         </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -211,6 +240,27 @@ export function ConnectorsView() {
         </div>
       )}
 
+
+      
+      {pluggyToken && (
+        <PluggyConnect
+          connectToken={pluggyToken}
+          includeSandbox={true}
+          onSuccess={(itemData) => {
+            console.log('success', itemData);
+            setPluggyToken(null);
+            fetch('/api/connectors', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: `Bank - ${itemData?.item?.connector?.name || 'Sandbox'}`, type: 'open_finance' })
+            }).then(() => fetchConnectors());
+          }}
+          onError={(error) => {
+            console.error('error', error);
+          }}
+          onClose={() => setPluggyToken(null)}
+        />
+      )}
 
       {/* Add Modal */}
       {showAddModal && (
