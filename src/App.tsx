@@ -74,7 +74,7 @@ export default function App() {
       case 'dashboard':
         return <DashboardView walletAddress={walletAddress} />;
       case 'connectors':
-        return <ConnectorsView />;
+        return <ConnectorsView onNavigate={setCurrentTab} />;
       case 'policies':
         return <PoliciesView onRunAudit={setActiveAudit} isGuest={!walletAddress} />;
       case 'proofs':

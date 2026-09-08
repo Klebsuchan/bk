@@ -1,8 +1,9 @@
+import crypto from 'crypto';
 import express from 'express';
 import path from 'path';
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, orderBy, query, limit, where } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, orderBy, query, limit, where, getDoc } from 'firebase/firestore';
 import fs from 'fs';
 import cors from 'cors';
 import { GoogleGenAI, Type, Schema } from '@google/genai';
@@ -133,7 +134,7 @@ app.use(express.json());
   // 3c. Delete Connector
   app.delete('/api/connectors/:id', async (req, res) => {
     try {
-      const { deleteDoc } = require('firebase/firestore'); // Import needed for delete
+      
       await deleteDoc(doc(db, 'connectors', req.params.id));
       res.json({ success: true });
     } catch(err) {
@@ -145,7 +146,7 @@ app.use(express.json());
   app.post('/api/connectors/:id/test', async (req, res) => {
     try {
       const { id } = req.params;
-      const crypto = require('crypto');
+      
       
       // Perform a real server-side cryptographic handshake generation
       const token = crypto.randomBytes(16).toString('hex');
@@ -181,13 +182,14 @@ app.use(express.json());
       
       // Fetch the actual policy to generate a real hash from its SQL query
       let queryStr = 'SELECT * FROM data';
-      const policyDoc = await getDocs(query(collection(db, 'policies'), where('__name__', '==', policyId)));
-      if (!policyDoc.empty) {
-         queryStr = policyDoc.docs[0].data().query || queryStr;
+            
+      const policyDoc = await getDoc(doc(db, 'policies', policyId));
+      if (policyDoc.exists()) {
+         queryStr = policyDoc.data().query || queryStr;
       }
       
       const timestamp = new Date().toISOString();
-      const crypto = require('crypto');
+      
       const hashInput = `${policyId}:${policyName}:${queryStr}:${timestamp}:${walletAddress || 'anonymous'}`;
       const realHash = '0x' + crypto.createHash('sha256').update(hashInput).digest('hex');
 
@@ -385,7 +387,7 @@ app.use(express.json());
   });
 
   
-  // Pluggy Connect Token Generation
+    // Pluggy Connect Token Generation
   app.get('/api/pluggy/token', async (req, res) => {
     try {
       const clientId = process.env.PLUGGY_CLIENT_ID;
@@ -395,44 +397,14 @@ app.use(express.json());
         return res.status(500).json({ error: 'Pluggy credentials not configured' });
       }
 
-      // 1. Get API Key from Pluggy
-      const authResponse = await fetch('https://api.pluggy.ai/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          clientId,
-          clientSecret
-        })
+      const { PluggyClient } = await import('pluggy-sdk');
+      const client = new PluggyClient({
+        clientId: clientId,
+        clientSecret: clientSecret,
       });
 
-      const authData = await authResponse.json();
-      
-      if (!authResponse.ok) {
-        throw new Error(authData.message || 'Failed to authenticate with Pluggy');
-      }
-
-      const apiKey = authData.apiKey;
-
-      // 2. Generate Connect Token
-      const tokenResponse = await fetch('https://api.pluggy.ai/connect_tokens', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-API-KEY': apiKey
-        }
-      });
-
-      const tokenData = await tokenResponse.json();
-
-      if (!tokenResponse.ok) {
-        throw new Error(tokenData.message || 'Failed to generate connect token');
-      }
-
-      res.json({ accessToken: tokenData.accessToken });
+      const connectToken = await client.createConnectToken();
+      res.json({ accessToken: connectToken.accessToken });
     } catch (error) {
       console.error('Pluggy API Error:', error);
       res.status(500).json({ error: error.message || 'Internal Server Error' });
